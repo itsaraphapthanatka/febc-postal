@@ -1,0 +1,87 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════
+   Aunjai Admin Design System — FEBC Thailand (v5.0)
+   Token block (design system §8). ใช้ผ่าน var(--…) / bg-[var(--…)]
+   ═══════════════════════════════════════════════════════════ */
+:root {
+  /* ── Core Brand (FEBC Signature) ── */
+  --color-primary: #005696;
+  --color-primary-dark: #003D6B;
+  --color-primary-light: #3378B0;
+  --color-primary-surface: #E3F2FD;
+
+  --color-accent: #FF8C21;
+  --color-accent-dark: #E07000;
+  --color-accent-light: #FFB366;
+  --color-accent-surface: #FFF3E0;
+
+  /* ── Surface & Background ── */
+  --color-bg: #F0F7FF;
+  --color-surface: #FFFFFF;
+  --color-surface-sidebar: #E8F0FE;
+  --color-surface-hover: #DBEAFE;
+
+  /* ── Text ── */
+  --color-text-title: #0F172A;
+  --color-text-body: #334155;
+  --color-text-label: #64748B;
+  --color-text-muted: #94A3B8;
+
+  /* ── Status ── */
+  --color-success: #A3E635;
+  --color-success-dark: #65A30D;
+  --color-success-surface: #F7FEE7;
+  --color-error: #EF4444;
+  --color-error-dark: #DC2626;
+  --color-error-surface: #FEF2F2;
+  --color-warning: #F59E0B;
+  --color-warning-surface: #FFFBEB;
+  --color-info: #38BDF8;
+  --color-info-dark: #0284C7;
+  --color-info-surface: #F0F9FF;
+
+  /* ── Aunjai Coin & Blessing ── */
+  --color-coin: #A3E635;
+  --color-coin-dark: #65A30D;
+  --color-blessing: #7C3AED;
+  --color-blessing-light: #A78BFA;
+  --color-blessing-surface: #F3E5F5;
+
+  /* ── Border ── */
+  --color-border: #E2E8F0;
+  --color-border-focus: #005696;
+
+  /* ── Font ── */
+  --font-primary: 'Kanit', 'Inter', 'Noto Sans SC', system-ui, sans-serif;
+
+  /* ── Spacing ── */
+  --space-1: 0.25rem;  --space-2: 0.5rem;  --space-3: 0.75rem;
+  --space-4: 1rem;     --space-5: 1.25rem; --space-6: 1.5rem;
+  --space-8: 2rem;     --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem;
+
+  /* ── Radius ── */
+  --radius-sm: 8px;  --radius-md: 16px;  --radius-lg: 24px;  --radius-full: 999px;
+
+  /* ── Shadow (FEBC Blue tint) ── */
+  --shadow-sm: 0 1px 2px rgba(0, 86, 150, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 86, 150, 0.08), 0 2px 4px -2px rgba(0, 86, 150, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 86, 150, 0.08), 0 4px 6px -4px rgba(0, 86, 150, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 86, 150, 0.10), 0 8px 10px -6px rgba(0, 86, 150, 0.05);
+
+  /* ── Theme Gradient ── */
+  --theme-gradient-start: #E3F2FD;
+  --theme-gradient-end: #FFFFFF;
+}
+
+body {
+  font-family: var(--font-primary);
+  color: var(--color-text-body);
+  background-color: var(--color-bg);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-primary);
+  font-weight: 700;
+}

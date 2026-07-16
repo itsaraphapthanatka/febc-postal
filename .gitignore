@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# Node / Next
+node_modules/
+.next/
+out/
+next-env.d.ts
+
+# Env & secrets
+.env
+.env.local
+*.local
+
+# Media (user uploads)
+backend/media/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
