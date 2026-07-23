@@ -8,18 +8,19 @@ const SIZES: Record<string, string> = {
   B5: "17.6cm 25cm",
 };
 
-export function Paper({
+/** พิมพ์หลายแผ่นใน print job เดียว — แต่ละสมาชิกของ pages เป็น 1 หน้ากระดาษ */
+export function PaperBatch({
   size = "A4",
   landscape = true,
   ready = true,
   autoPrint = true,
-  children,
+  pages,
 }: {
   size?: string;
   landscape?: boolean;
   ready?: boolean;
   autoPrint?: boolean;
-  children: React.ReactNode;
+  pages: React.ReactNode[];
 }) {
   useEffect(() => {
     if (ready && autoPrint) {
@@ -39,6 +40,10 @@ export function Paper({
         @page { size: ${dim} ${landscape ? "landscape" : ""}; margin: 1.4cm; }
         html, body { margin: 0; padding: 0; background: #fff; }
         .print-root { font-family: 'Sarabun', sans-serif; color: #0f3e92; }
+        @media print {
+          .print-root { break-after: page; }
+          .print-root:last-child { break-after: auto; }
+        }
         @media screen {
           body { background: #e8eefc; }
           .print-root { background: #fff; margin: 24px auto; padding: 2cm; max-width: 900px;
@@ -47,7 +52,29 @@ export function Paper({
       `,
         }}
       />
-      <div className="print-root">{children}</div>
+      {pages.map((p, i) => (
+        <div className="print-root" key={i}>
+          {p}
+        </div>
+      ))}
     </>
+  );
+}
+
+export function Paper({
+  size = "A4",
+  landscape = true,
+  ready = true,
+  autoPrint = true,
+  children,
+}: {
+  size?: string;
+  landscape?: boolean;
+  ready?: boolean;
+  autoPrint?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <PaperBatch size={size} landscape={landscape} ready={ready} autoPrint={autoPrint} pages={[children]} />
   );
 }

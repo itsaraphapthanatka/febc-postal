@@ -60,6 +60,46 @@ def _student_schema(s: PostStudent) -> PrintStudent:
     )
 
 
+@router.get("/print/plans", response_model=list[PrintData])
+def print_plans_multi(ids: str, db: Session = Depends(get_db)):
+    """ข้อมูลพิมพ์หลายแผนในครั้งเดียว (ติ้กเลือกแล้วพิมพ์รวมหน้าเดียว) — ids คั่นด้วย ','"""
+    try:
+        id_list = [int(x) for x in ids.split(",") if x.strip()]
+    except ValueError:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "รูปแบบ ids ไม่ถูกต้อง")
+    if not id_list or len(id_list) > 200:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "จำนวนรายการต้องอยู่ระหว่าง 1-200")
+    sigs = _signatures(db)
+    result: list[PrintData] = []
+    for pid in id_list:
+        plan = db.get(PostLessonPlan, pid)
+        if not plan:
+            continue
+        student = db.get(PostStudent, plan.post_student_id)
+        if not student:
+            continue
+        title = db.execute(
+            select(PostLesson.title).where(PostLesson.id == plan.post_lesson_id)
+        ).scalar()
+        result.append(
+            PrintData(
+                plan=PrintPlan(
+                    id=plan.id,
+                    post_lesson_id=plan.post_lesson_id,
+                    lesson_title=title,
+                    sent_date=plan.sent_date,
+                    received_date=plan.received_date,
+                    lesson_mark=plan.lesson_mark,
+                ),
+                student=_student_schema(student),
+                signatures=sigs,
+            )
+        )
+    if not result:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, "ไม่พบแผนการเรียนตามรายการที่เลือก")
+    return result
+
+
 @router.get("/print/plan/{pid}", response_model=PrintData)
 def print_plan(pid: int, db: Session = Depends(get_db)):
     plan = db.get(PostLessonPlan, pid)

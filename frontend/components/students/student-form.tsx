@@ -16,6 +16,7 @@ import {
 } from "@/lib/students";
 import { Button } from "@/components/ui/button";
 import { Input, FormField } from "@/components/ui/input";
+import { htmlToLines, linesToHtml } from "@/lib/richtext";
 
 const inputCls =
   "w-full px-4 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]";
@@ -32,7 +33,11 @@ function calcAge(bday: string): string {
 export function StudentForm({ student }: { student?: Student }) {
   const router = useRouter();
   const isEdit = !!student;
-  const [form, setForm] = useState<Partial<Student>>(student ?? {});
+  const [form, setForm] = useState<Partial<Student>>(() =>
+    student
+      ? { ...student, serving: htmlToLines(student.serving), note: htmlToLines(student.note) }
+      : {},
+  );
   const [provinces, setProvinces] = useState<string[]>([]);
   const [amphures, setAmphures] = useState<string[]>([]);
   const [tambons, setTambons] = useState<{ name_th: string; zip_code: number | null }[]>([]);
@@ -83,6 +88,8 @@ export function StudentForm({ student }: { student?: Student }) {
       Object.entries(form).forEach(([k, v]) => {
         payload[k] = v === "" ? null : v;
       });
+      payload.serving = linesToHtml(form.serving as string | null);
+      payload.note = linesToHtml(form.note as string | null);
       let saved: Student;
       if (isEdit) {
         saved = await updateStudent(student!.id, payload);
@@ -198,7 +205,7 @@ export function StudentForm({ student }: { student?: Student }) {
         </FormField>
         <div className="md:col-span-3">
           <FormField label="การรับใช้">
-            <textarea className={inputCls} rows={2} value={form.serving ?? ""} onChange={(e) => set("serving", e.target.value)} />
+            <textarea className={inputCls} rows={4} placeholder={"1) …\n2) …\n3) …"} value={form.serving ?? ""} onChange={(e) => set("serving", e.target.value)} />
           </FormField>
         </div>
         <div className="md:col-span-3">

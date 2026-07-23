@@ -31,6 +31,8 @@ export type PrintData = {
 };
 
 export const getPrintPlan = (id: number) => apiFetch<PrintData>(`/api/print/plan/${id}`);
+export const getPrintPlans = (ids: number[]) =>
+  apiFetch<PrintData[]>(`/api/print/plans?ids=${ids.join(",")}`);
 export const getPrintStudent = (id: number) => apiFetch<PrintData>(`/api/print/student/${id}`);
 
 export const logPrintEvent = (post_lesson_plan_id: number, go_or_back: number, stamp_sent = true) =>

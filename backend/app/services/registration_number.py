@@ -6,12 +6,17 @@ from sqlalchemy.orm import Session
 
 
 def next_individual(db: Session, suffix: str = "") -> str:
-    """รหัสเดิม: เลขวิ่งสูงสุด (ตัดรหัสแม่ข่าย MMxxxx/YYYY ออก) + 1 แล้วต่อ '/'+อักษร"""
+    """รหัสเดิม: ต่อจากรหัสของนักเรียนที่สร้าง 'ล่าสุด' + 1 แล้วต่อ '/'+อักษร
+
+    อิงลำดับการสร้าง (id) ไม่ใช่ MAX(เลข) — ในฐานมีรหัสเก่าคีย์ผิด (เช่น 70302/ก
+    ปี 2018) ซึ่ง MAX จะไปคว้ามาแล้วทำให้รหัสกระโดด (ตรงกับพฤติกรรมระบบเดิม)
+    """
     row = db.execute(
         text(
             "SELECT registration_number FROM post_students "
             "WHERE SUBSTRING_INDEX(registration_number,'/',-1) NOT REGEXP '^[0-9]{4}$' "
-            "ORDER BY CAST(SUBSTRING_INDEX(registration_number,'/',1) AS UNSIGNED) DESC "
+            "AND registration_number REGEXP '^[0-9]+/' "
+            "ORDER BY id DESC "
             "LIMIT 1"
         )
     ).scalar()
