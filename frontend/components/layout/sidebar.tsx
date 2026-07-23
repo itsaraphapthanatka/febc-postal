@@ -6,10 +6,19 @@ import { usePathname } from "next/navigation";
 import { ChevronDown, ChevronRight, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { NAV, type NavItem } from "./nav";
 import { cn } from "@/lib/utils";
+import { useCurrentUser } from "./user-context";
 
 export function Sidebar() {
   const [expanded, setExpanded] = useState(true);
   const pathname = usePathname();
+  const { user } = useCurrentUser();
+  const isAdmin = !!user?.is_admin;
+
+  const nav = NAV.filter((item) => isAdmin || !item.adminOnly).map((item) =>
+    item.children
+      ? { ...item, children: item.children.filter((c) => isAdmin || !c.adminOnly) }
+      : item,
+  );
 
   return (
     <aside
@@ -36,7 +45,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto p-2 space-y-1">
-        {NAV.map((item) => (
+        {nav.map((item) => (
           <NavNode key={item.label} item={item} expanded={expanded} pathname={pathname} />
         ))}
       </nav>

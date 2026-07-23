@@ -26,3 +26,10 @@ def require_staff(user: User = Depends(get_current_user)) -> User:
     if not (user.role == "staff" or user.is_admin):
         raise HTTPException(status.HTTP_403_FORBIDDEN, "ต้องเป็นเจ้าหน้าที่จึงเข้าใช้งานได้")
     return user
+
+
+def require_admin(user: User = Depends(get_current_user)) -> User:
+    """RBAC: เฉพาะ admin (จัดการผู้ใช้ + ตั้งค่าระบบ)"""
+    if not user.is_admin:
+        raise HTTPException(status.HTTP_403_FORBIDDEN, "ต้องเป็นผู้ดูแลระบบจึงเข้าใช้งานได้")
+    return user

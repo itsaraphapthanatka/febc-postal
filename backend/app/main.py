@@ -18,6 +18,7 @@ from .routers import (
     post_lessons,
     print_router,
     students,
+    users,
 )
 
 app = FastAPI(title="FEBC Postal API", version="0.1.0")
@@ -43,6 +44,7 @@ app.include_router(post_lessons.router)
 app.include_router(print_router.router)
 app.include_router(geo.router)
 app.include_router(lookups.router)
+app.include_router(users.router)
 
 
 @app.get("/api/ping")

@@ -1,22 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getMe, type CurrentUser } from "@/lib/auth";
-
-type Ctx = { user: CurrentUser | null };
+import { useCurrentUser } from "./user-context";
 
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
-  const [state, setState] = useState<"loading" | "ok">("loading");
+  const { user, loading } = useCurrentUser();
 
   useEffect(() => {
-    getMe()
-      .then(() => setState("ok"))
-      .catch(() => router.replace("/login"));
-  }, [router]);
+    if (!loading && !user) router.replace("/login");
+  }, [loading, user, router]);
 
-  if (state === "loading") {
+  if (loading || !user) {
     return (
       <div className="p-6 space-y-4">
         <div className="h-8 w-48 rounded-xl bg-gray-200 animate-pulse" />

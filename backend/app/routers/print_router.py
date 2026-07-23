@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..config import settings as app_settings
-from ..core.deps import require_staff
+from ..core.deps import require_admin, require_staff
 from ..db import get_db
 from ..models.post_default_value import PostDefaultValue
 from ..models.post_lesson import PostLesson, PostLessonPlan, PostPrintHistory
@@ -134,7 +134,7 @@ def get_certificate_layout(db: Session = Depends(get_db)):
     return DEFAULT_CERT_LAYOUT
 
 
-@router.put("/settings/certificate-layout")
+@router.put("/settings/certificate-layout", dependencies=[Depends(require_admin)])
 def save_certificate_layout(layout: dict, db: Session = Depends(get_db)):
     value = json.dumps(layout, ensure_ascii=False)
     row = db.execute(
@@ -148,7 +148,11 @@ def save_certificate_layout(layout: dict, db: Session = Depends(get_db)):
     return {"status": "ok", "layout": layout}
 
 
-@router.post("/settings/certificate/signature", response_model=Signatures)
+@router.post(
+    "/settings/certificate/signature",
+    response_model=Signatures,
+    dependencies=[Depends(require_admin)],
+)
 async def upload_signature(
     which: str = Form(...),
     file: UploadFile = File(...),

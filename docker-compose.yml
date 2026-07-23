@@ -1,23 +1,44 @@
 services:
+  db:
+    image: mysql:8.0
+    container_name: febc_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: FebcRoot#2026
+      MYSQL_DATABASE: febcthcom_dev24
+      MYSQL_USER: febc_api
+      MYSQL_PASSWORD: "FebcApi#2026"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "127.0.0.1:3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-pFebcRoot#2026"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
   backend:
     build: ./backend
     container_name: febc_backend
     ports:
-      - "8001:8000"
+      - "127.0.0.1:8002:8000"
     env_file:
       - ./backend/.env
     volumes:
       - ./backend:/app
       - backend_media:/app/media
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   frontend:
     build: ./frontend
     container_name: febc_frontend
     ports:
-      - "3000:3000"
+      - "127.0.0.1:3000:3000"
     env_file:
       - ./frontend/.env.local
     volumes:
@@ -30,3 +51,4 @@ services:
 
 volumes:
   backend_media:
+  db_data:

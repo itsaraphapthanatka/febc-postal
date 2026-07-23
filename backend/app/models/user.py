@@ -1,4 +1,6 @@
-from sqlalchemy import Boolean, Integer, String, Text
+from datetime import datetime
+
+from sqlalchemy import Boolean, DateTime, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from ..db import Base
@@ -17,3 +19,5 @@ class User(Base):
     provider_name: Mapped[str | None] = mapped_column(String(10))
     role: Mapped[str | None] = mapped_column(String(15))
     is_admin: Mapped[bool | None] = mapped_column(Boolean)
+    created_at: Mapped[datetime | None] = mapped_column(DateTime)
+    updated_at: Mapped[datetime | None] = mapped_column(DateTime)

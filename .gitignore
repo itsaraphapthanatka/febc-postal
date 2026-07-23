@@ -24,3 +24,7 @@ backend/media/
 Thumbs.db
 .idea/
 .vscode/
+
+# Database dumps
+*.sql
+dump-*.sql

@@ -2,7 +2,9 @@ export type NavItem = {
   label: string;
   emoji: string;
   href?: string;
-  children?: { label: string; href: string }[];
+  /** แสดงเฉพาะ admin (is_admin) */
+  adminOnly?: boolean;
+  children?: { label: string; href: string; adminOnly?: boolean }[];
 };
 
 /** เมนูฝั่ง postal (mirror /post panel groups) */
@@ -37,6 +39,10 @@ export const NAV: NavItem[] = [
   {
     label: "ตั้งค่า",
     emoji: "⚙️",
-    children: [{ label: "ตั้งค่าใบประกาศ", href: "/post/settings/certificate" }],
+    adminOnly: true,
+    children: [
+      { label: "ตั้งค่าใบประกาศ", href: "/post/settings/certificate", adminOnly: true },
+      { label: "ผู้ใช้ระบบ", href: "/post/users", adminOnly: true },
+    ],
   },
 ];

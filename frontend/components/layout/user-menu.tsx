@@ -1,18 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
-import { getMe, logout, type CurrentUser } from "@/lib/auth";
+import { logout } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
+import { useCurrentUser } from "./user-context";
 
 export function UserMenu() {
   const router = useRouter();
-  const [user, setUser] = useState<CurrentUser | null>(null);
-
-  useEffect(() => {
-    getMe().then(setUser).catch(() => setUser(null));
-  }, []);
+  const { user } = useCurrentUser();
 
   const displayName =
     user?.name || [user?.first_name, user?.last_name].filter(Boolean).join(" ") || user?.email || "ผู้ใช้";
