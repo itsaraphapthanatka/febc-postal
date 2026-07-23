@@ -28,6 +28,23 @@ export function htmlToLines(value: string | null | undefined): string {
     .join("\n");
 }
 
+/** แตกค่าการรับใช้เป็นรายการแถว — ตัดเลขนำหน้าเดิม (1) / 1. / 1-) ออก ให้เหลือแต่เนื้อหา */
+export function servingToRows(value: string | null | undefined): string[] {
+  return htmlToLines(value)
+    .split("\n")
+    .map((l) => l.replace(/^\s*\d+\s*[).\-]\s*/, "").trim())
+    .filter(Boolean);
+}
+
+/** รวมแถวกลับเป็นข้อความใส่เลขข้อ "1) …" ต่อบรรทัด (รูปแบบเดียวกับข้อมูลเดิม) */
+export function rowsToServing(rows: string[]): string {
+  return rows
+    .map((r) => r.trim())
+    .filter(Boolean)
+    .map((r, i) => `${i + 1}) ${r}`)
+    .join("\n");
+}
+
 export function linesToHtml(value: string | null | undefined): string | null {
   if (!value || !value.trim()) return null;
   const esc = (s: string) =>

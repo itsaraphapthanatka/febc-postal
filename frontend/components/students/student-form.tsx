@@ -14,9 +14,10 @@ import {
   uploadTestimony,
   type Student,
 } from "@/lib/students";
+import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, FormField } from "@/components/ui/input";
-import { htmlToLines, linesToHtml } from "@/lib/richtext";
+import { htmlToLines, linesToHtml, rowsToServing, servingToRows } from "@/lib/richtext";
 
 const inputCls =
   "w-full px-4 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]";
@@ -34,10 +35,20 @@ export function StudentForm({ student }: { student?: Student }) {
   const router = useRouter();
   const isEdit = !!student;
   const [form, setForm] = useState<Partial<Student>>(() =>
-    student
-      ? { ...student, serving: htmlToLines(student.serving), note: htmlToLines(student.note) }
-      : {},
+    student ? { ...student, note: htmlToLines(student.note) } : {},
   );
+  // การรับใช้: แก้เป็นรายการแถว เพิ่ม/ลบได้ (เก็บกลับเป็น "1) …" ต่อบรรทัด)
+  // เริ่มต้นอย่างน้อย 3 แถวเสมอ — แถวว่างจะถูกข้ามตอนบันทึก
+  const [servingRows, setServingRows] = useState<string[]>(() => {
+    const rows = student ? servingToRows(student.serving) : [];
+    while (rows.length < 3) rows.push("");
+    return rows;
+  });
+
+  const setRow = (i: number, v: string) =>
+    setServingRows((rows) => rows.map((r, idx) => (idx === i ? v : r)));
+  const addRow = () => setServingRows((rows) => [...rows, ""]);
+  const deleteRow = (i: number) => setServingRows((rows) => rows.filter((_, idx) => idx !== i));
   const [provinces, setProvinces] = useState<string[]>([]);
   const [amphures, setAmphures] = useState<string[]>([]);
   const [tambons, setTambons] = useState<{ name_th: string; zip_code: number | null }[]>([]);
@@ -88,7 +99,7 @@ export function StudentForm({ student }: { student?: Student }) {
       Object.entries(form).forEach(([k, v]) => {
         payload[k] = v === "" ? null : v;
       });
-      payload.serving = linesToHtml(form.serving as string | null);
+      payload.serving = linesToHtml(rowsToServing(servingRows));
       payload.note = linesToHtml(form.note as string | null);
       let saved: Student;
       if (isEdit) {
@@ -205,7 +216,33 @@ export function StudentForm({ student }: { student?: Student }) {
         </FormField>
         <div className="md:col-span-3">
           <FormField label="การรับใช้">
-            <textarea className={inputCls} rows={4} placeholder={"1) …\n2) …\n3) …"} value={form.serving ?? ""} onChange={(e) => set("serving", e.target.value)} />
+            <div className="space-y-2">
+              {servingRows.map((row, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="w-6 text-sm text-[var(--color-text-label)] text-right shrink-0">
+                    {i + 1}.
+                  </span>
+                  <input
+                    className={inputCls}
+                    value={row}
+                    placeholder="เช่น ทำงานแผนกบทเรียน FEBC"
+                    onChange={(e) => setRow(i, e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="danger"
+                    className="px-2.5 py-2 shrink-0"
+                    onClick={() => deleteRow(i)}
+                    title="ลบรายการนี้"
+                  >
+                    <Trash2 size={15} />
+                  </Button>
+                </div>
+              ))}
+              <Button type="button" variant="secondary" className="px-3 py-1.5" onClick={addRow}>
+                <Plus size={15} /> เพิ่มรายการ
+              </Button>
+            </div>
           </FormField>
         </div>
         <div className="md:col-span-3">
