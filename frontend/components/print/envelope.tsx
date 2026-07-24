@@ -24,14 +24,15 @@ export function studentAddress(s: {
 export function Envelope({
   sender,
   recipient,
-  lessonTitle,
+  lessonTitles,
   regNumber,
 }: {
   sender: string[];
   recipient: string[];
-  lessonTitle?: string | null;
+  lessonTitles?: (string | null | undefined)[];
   regNumber?: string | null;
 }) {
+  const lessons = (lessonTitles ?? []).filter((t): t is string => Boolean(t));
   return (
     <div className="flex flex-col justify-between" style={{ minHeight: "14cm" }}>
       {/* sender — top left */}
@@ -44,10 +45,27 @@ export function Envelope({
       {/* middle: lesson (left) + recipient (right) */}
       <div className="flex justify-between items-end gap-8" style={{ marginTop: "1.5cm" }}>
         <div style={{ fontSize: 16, width: "35%" }}>
-          {lessonTitle && (
+          {lessons.length > 0 && (
             <>
-              <div style={{ fontWeight: 600 }}>บทเรียน:BCC</div>
-              <div>{lessonTitle}</div>
+              <div
+                style={{
+                  fontWeight: 600,
+                  display: "inline-block",
+                  border: "1px solid currentColor",
+                  padding: "1px 8px",
+                }}
+              >
+                บทเรียน:BCC
+              </div>
+              {lessons.length === 1 ? (
+                <div style={{ marginTop: 6 }}>{lessons[0]}</div>
+              ) : (
+                <ul style={{ margin: "6px 0 0", paddingLeft: "1.1em", listStyle: "disc" }}>
+                  {lessons.map((t, i) => (
+                    <li key={i} style={{ lineHeight: 1.5 }}>{t}</li>
+                  ))}
+                </ul>
+              )}
             </>
           )}
         </div>

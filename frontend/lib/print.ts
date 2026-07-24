@@ -30,6 +30,30 @@ export type PrintData = {
   signatures: Signatures;
 };
 
+/** ซองหนึ่งใบต่อนักเรียนหนึ่งคน — รวมบทเรียนที่เลือกไว้ทั้งหมดของนักเรียนคนเดียวกันไว้ในซองเดียว */
+export type EnvelopeGroup = {
+  student: PrintStudent;
+  lessonTitles: string[];
+  planIds: number[];
+};
+
+/** จัดกลุ่มแผนการเรียนตามนักเรียน คงลำดับที่พบครั้งแรกไว้ */
+export function groupByStudent(rows: PrintData[]): EnvelopeGroup[] {
+  const byStudent = new Map<number, EnvelopeGroup>();
+  for (const r of rows) {
+    let g = byStudent.get(r.student.id);
+    if (!g) {
+      g = { student: r.student, lessonTitles: [], planIds: [] };
+      byStudent.set(r.student.id, g);
+    }
+    if (r.plan) {
+      g.planIds.push(r.plan.id);
+      if (r.plan.lesson_title) g.lessonTitles.push(r.plan.lesson_title);
+    }
+  }
+  return [...byStudent.values()];
+}
+
 export const getPrintPlan = (id: number) => apiFetch<PrintData>(`/api/print/plan/${id}`);
 export const getPrintPlans = (ids: number[]) =>
   apiFetch<PrintData[]>(`/api/print/plans?ids=${ids.join(",")}`);

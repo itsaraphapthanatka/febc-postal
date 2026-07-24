@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getPrintPlans, logPrintEvent, type PrintData } from "@/lib/print";
+import { getPrintPlans, groupByStudent, logPrintEvent, type PrintData } from "@/lib/print";
 import { PaperBatch } from "@/components/print/paper";
 import { Envelope, FEBC_ADDRESS, studentAddress } from "@/components/print/envelope";
 
@@ -30,17 +30,20 @@ function Inner() {
   if (!ids.length) return <div style={{ padding: 40 }}>ไม่ได้ระบุรายการ (ids)</div>;
   if (!items) return <div style={{ padding: 40 }}>กำลังโหลด…</div>;
 
+  // รวมบทเรียนที่เลือกของนักเรียนคนเดียวกันไว้ในซองเดียว (หน้าเดียว)
+  const groups = groupByStudent(items);
+
   return (
     <PaperBatch
       size={size}
       ready
-      pages={items.map((d) => (
+      pages={groups.map((g) => (
         <Envelope
-          key={d.plan?.id}
+          key={g.student.id}
           sender={FEBC_ADDRESS}
-          recipient={studentAddress(d.student)}
-          lessonTitle={d.plan?.lesson_title}
-          regNumber={d.student.registration_number}
+          recipient={studentAddress(g.student)}
+          lessonTitles={g.lessonTitles}
+          regNumber={g.student.registration_number}
         />
       ))}
     />

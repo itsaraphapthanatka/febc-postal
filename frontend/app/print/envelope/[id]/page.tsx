@@ -24,7 +24,7 @@ function Inner({ id }: { id: number }) {
       <Envelope
         sender={FEBC_ADDRESS}
         recipient={studentAddress(data.student)}
-        lessonTitle={data.plan?.lesson_title}
+        lessonTitles={[data.plan?.lesson_title]}
         regNumber={data.student.registration_number}
       />
     </Paper>

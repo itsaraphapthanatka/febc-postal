@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { getPrintPlans, logPrintEvent, type PrintData } from "@/lib/print";
+import { getPrintPlans, groupByStudent, logPrintEvent, type PrintData } from "@/lib/print";
 import { PaperBatch } from "@/components/print/paper";
 import { Envelope, FEBC_ADDRESS, studentAddress } from "@/components/print/envelope";
 
@@ -31,17 +31,20 @@ function Inner() {
   if (!items) return <div style={{ padding: 40 }}>กำลังโหลด…</div>;
 
   // ซองส่งกลับ: ผู้เรียนเป็นผู้ส่ง (บนซ้าย), FEBC เป็นผู้รับ
+  // รวมบทเรียนที่เลือกของนักเรียนคนเดียวกันไว้ในซองเดียว (หน้าเดียว)
+  const groups = groupByStudent(items);
+
   return (
     <PaperBatch
       size={size}
       ready
-      pages={items.map((d) => (
+      pages={groups.map((g) => (
         <Envelope
-          key={d.plan?.id}
-          sender={studentAddress(d.student)}
+          key={g.student.id}
+          sender={studentAddress(g.student)}
           recipient={FEBC_ADDRESS}
-          lessonTitle={d.plan?.lesson_title}
-          regNumber={d.student.registration_number}
+          lessonTitles={g.lessonTitles}
+          regNumber={g.student.registration_number}
         />
       ))}
     />
