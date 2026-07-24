@@ -13,4 +13,5 @@ COPY . .
 
 EXPOSE 8000
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# production: ไม่ใช้ --reload; worker เดียว (rate-limit login เป็น in-memory ตาม CUTOVER.md)
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

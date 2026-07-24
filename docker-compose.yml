@@ -27,7 +27,6 @@ services:
     env_file:
       - ./backend/.env
     volumes:
-      - ./backend:/app
       - backend_media:/app/media
     depends_on:
       db:
@@ -35,16 +34,14 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      args:
+        # ฝังลง bundle ตอน build (production ไม่อ่าน .env.local ใน container)
+        NEXT_PUBLIC_API_URL: https://uat-post.febcthailand.com
     container_name: febc_frontend
     ports:
       - "127.0.0.1:3000:3000"
-    env_file:
-      - ./frontend/.env.local
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     depends_on:
       - backend
     restart: unless-stopped
