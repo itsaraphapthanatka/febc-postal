@@ -93,7 +93,9 @@ export default function UsersPage() {
     draft.email.trim() &&
     (editingId !== "new" || draft.password.length >= 8);
 
-  const EditCells = () => (
+  // JSX ธรรมดา (ไม่ใช่ component ซ้อนใน render) — ถ้าเป็น component ใหม่ทุก render
+  // React จะ remount input ทุกครั้งที่พิมพ์ ทำให้ focus หลุดหลังพิมพ์ 1 ตัว
+  const editCells = (
     <>
       <td className="px-4 py-2">
         <input className={inp} placeholder="ชื่อ" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
@@ -162,7 +164,7 @@ export default function UsersPage() {
           <tbody>
             {editingId === "new" && (
               <tr className="border-t border-[var(--color-border)] bg-[var(--color-primary-surface)]/40">
-                <EditCells />
+                {editCells}
               </tr>
             )}
             {loading ? (
@@ -173,7 +175,7 @@ export default function UsersPage() {
               users.map((u) =>
                 editingId === u.id ? (
                   <tr key={u.id} className="border-t border-[var(--color-border)] bg-[var(--color-primary-surface)]/40">
-                    <EditCells />
+                    {editCells}
                   </tr>
                 ) : (
                   <tr key={u.id} className="border-t border-[var(--color-border)] hover:bg-[var(--color-surface-hover)]">
