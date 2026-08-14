@@ -18,6 +18,7 @@ import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input, FormField } from "@/components/ui/input";
 import { htmlToLines, linesToHtml, rowsToServing, servingToRows } from "@/lib/richtext";
+import { API_URL } from "@/lib/api";
 
 const inputCls =
   "w-full px-4 py-2.5 rounded-[var(--radius-md)] border border-[var(--color-border)] bg-[var(--color-surface)] text-sm focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]";
@@ -262,7 +263,7 @@ export function StudentForm({ student }: { student?: Student }) {
           <FormField label="แนบไฟล์/รูปคำพยาน">
             <input type="file" accept="image/*,application/pdf" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-sm" />
             {form.testimony_file && !file && (
-              <a href={`${process.env.NEXT_PUBLIC_API_URL}/media/${form.testimony_file}`} target="_blank" className="text-xs text-[var(--color-primary)] underline">
+              <a href={`${API_URL}/media/${form.testimony_file}`} target="_blank" className="text-xs text-[var(--color-primary)] underline">
                 ดูไฟล์ปัจจุบัน
               </a>
             )}

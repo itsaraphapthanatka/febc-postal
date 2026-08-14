@@ -1,5 +1,13 @@
-export const API_URL =
+/**
+ * ค่า "same-origin" = ยิง API ผ่าน path สัมพัทธ์ (/api, /media) ให้ reverse proxy
+ * ส่งต่อไป backend เอง — ใช้ตอน deploy หลัง nginx เพื่อไม่ต้อง rebuild bundle
+ * ใหม่ทุกครั้งที่เปลี่ยนโดเมน/IP (NEXT_PUBLIC_* ถูกฝังลง bundle ตอน build)
+ */
+const configuredApiUrl =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8001";
+
+export const API_URL =
+  configuredApiUrl === "same-origin" ? "" : configuredApiUrl;
 
 export class ApiError extends Error {
   status: number;

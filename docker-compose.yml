@@ -10,7 +10,7 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     command: >-
       --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
-      --innodb-buffer-pool-size=1G
+      --innodb-buffer-pool-size=640M
     ports:
       - "127.0.0.1:3306:3306"
     volumes:
@@ -41,7 +41,9 @@ services:
       context: ./frontend
       args:
         # ฝังลง bundle ตอน build (production ไม่อ่าน .env.local ใน container)
-        NEXT_PUBLIC_API_URL: https://uat-post.febcthailand.com
+        # "same-origin" = ยิง /api, /media ผ่าน nginx เดียวกับหน้าเว็บ — ใช้ได้ทั้ง
+        # โดเมนและ IP โดยไม่ต้อง rebuild ใหม่เมื่อย้าย DNS
+        NEXT_PUBLIC_API_URL: same-origin
     container_name: febc_frontend
     ports:
       - "127.0.0.1:3000:3000"

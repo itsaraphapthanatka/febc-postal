@@ -82,14 +82,38 @@ export async function uploadSignature(which: "director" | "section_head", file: 
 
 export const mediaUrl = (path: string) => `${API_URL}/media/${path}`;
 
-export type Pos = { top: number; left: number };
-export type CertLayout = {
-  name: Pos;
-  date: Pos;
-  hours: Pos;
-  section_head: Pos;
-  director: Pos;
-};
+/** ความกว้างใบประกาศจริง (A4 แนวนอน 29.7cm ที่ 96dpi) — ใช้เทียบสเกลตอนพรีวิว */
+export const CERT_SHEET_W = 1123;
+
+/** ฟอนต์ที่เลือกได้ — ต้องตรงกับรายการใน backend (print_router.CERT_FONTS)
+ *  และกับ @import ใน CertStyle ห้ามรับค่าอิสระจากผู้ใช้ (กัน CSS injection) */
+export const CERT_FONTS = ["Sarabun", "Prompt", "Kanit", "Noto Sans Thai"] as const;
+export type CertFont = (typeof CERT_FONTS)[number];
+
+/** @import ของฟอนต์ทั้งหมดใน CERT_FONTS — สตริงคงที่ ใช้ร่วมกันระหว่าง
+ *  หน้าพิมพ์ (CertStyle) กับหน้าตั้งค่า (พรีวิว) ให้เห็นฟอนต์เดียวกัน
+ *  แก้ที่นี่ที่เดียวเมื่อเพิ่มฟอนต์ และต้องเพิ่มใน CERT_FONTS + backend ด้วย */
+export const CERT_FONT_IMPORT_CSS =
+  "@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@400;600;700" +
+  "&family=Prompt:wght@400;600;700&family=Kanit:wght@400;600;700" +
+  "&family=Noto+Sans+Thai:wght@400;600;700&display=swap');";
+
+export const CERT_FONT_FALLBACK: CertFont = "Sarabun";
+export const isCertFont = (v: unknown): v is CertFont =>
+  typeof v === "string" && (CERT_FONTS as readonly string[]).includes(v);
+
+/** ขนาดฟอนต์/ความสูงลายเซ็นที่อนุญาต (px บนใบจริง) */
+export const CERT_SIZE_MIN = 8;
+export const CERT_SIZE_MAX = 200;
+
+export const CERT_ITEM_KEYS = ["name", "date", "hours", "section_head", "director"] as const;
+export type CertItemKey = (typeof CERT_ITEM_KEYS)[number];
+
+/** top/left = % ของใบประกาศ (จุดกึ่งกลาง element)
+ *  size = px บนใบจริง — ข้อความคือ font-size, ลายเซ็นคือความสูงรูป */
+export type Pos = { top: number; left: number; size: number };
+
+export type CertLayout = Record<CertItemKey, Pos> & { font: CertFont };
 
 export const getCertLayout = () => apiFetch<CertLayout>("/api/settings/certificate-layout");
 
